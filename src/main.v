@@ -1,3 +1,4 @@
+:wqa
 module main
 
 fn main() {
