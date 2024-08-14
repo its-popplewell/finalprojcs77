@@ -10,4 +10,4 @@ I would bet, as I am writing this, that there is probably a uniform buffer examp
 TO BE CONTINUED
 
 <img width="1010" alt="Screenshot 2024-08-14 at 15 05 06" src="https://github.com/user-attachments/assets/d6993694-5d46-4780-8ca3-18629b5161e8">
-
+(ex 4, sokol)
