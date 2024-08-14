@@ -32,8 +32,9 @@ struct Vertex_t {
 	a f32
 }
 
-struct Time_d {
-	frames u32 = 0
+struct Uniforms {
+	time u32
+
 }
 
 fn main() {
@@ -65,7 +66,7 @@ fn (mut a App) run() {
 		window_title: title.str
 		html5_canvas_name: title.str
 		cleanup_userdata_cb: cleanup
-		sample_count: 4 // Enables MSAA (Multisample anti-aliasing) x4 on rendered output, this can be omitted.
+		// sample_count: 4 // Enables MSAA (Multisample anti-aliasing) x4 on rendered output, this can be omitted.
 	}
 	sapp.run(&desc)
 }
@@ -75,6 +76,8 @@ fn init(user_data voidptr) {
 	mut desc := sapp.create_desc()
 
 	gfx.setup(&desc)
+
+	unibuf := gfx.make_uniform_buffer(sizeof(Uniforms))
 
 	// `vertices` defines a vertex buffer with 3 vertices
 	// with 3 position fields XYZ and 4 color components RGBA -
@@ -96,10 +99,6 @@ fn init(user_data voidptr) {
 		Vertex_t{-0.5, -0.5, 0.5, 0.0, 0.0, 1.0, 1.0},
 	]
 
-	time := [
-		Time_d{}
-	]
-
 	// Create a vertex buffer with the 3 vertices defined above.
 	mut vertex_buffer_desc := gfx.BufferDesc{
 		label: c'triangle-vertices'
@@ -112,19 +111,7 @@ fn init(user_data voidptr) {
 		size: vertex_buffer_desc.size
 	}
 
-	mut time_buffer_desc := gfx.BufferDesc {
-		label: c'time-var?'
-	}
-	unsafe { vmemset(&time_buffer_desc, 0, int(sizeof(time_buffer_desc))) }
-
-	time_buffer_desc.size = usize(time.len * int(sizeof(Time_d)))
-	time_buffer_desc.data = gfx.Range {
-		ptr: time.data
-		size: time_buffer_desc.size
-	}
-
 	app.bind.vertex_buffers[0] = gfx.make_buffer(&vertex_buffer_desc)
-	app.bind.vertex_buffers[1] = gfx.make_buffer(&time_buffer_desc)
 
 	// Create shader from the code-generated sg_shader_desc (gfx.ShaderDesc in V).
 	// Note the function `C.simple_shader_desc()` (also defined above) - this is
@@ -149,7 +136,6 @@ fn init(user_data voidptr) {
 	// If they change in the shader code they will also change here.
 	pipeline_desc.layout.attrs[C.ATTR_vs_position].format = .float3 // x,y,z as f32
 	pipeline_desc.layout.attrs[C.ATTR_vs_color0].format = .float4 // r, g, b, a as f32
-	pipeline_desc.layout.attrs[C.ATTR_vs_time].format = .uint // t as u32
 	// The .label is optional but can aid debugging sokol shader related issues
 	// When things get complex - and you get tired :)
 	pipeline_desc.label = c'triangle-pipeline'
@@ -175,4 +161,3 @@ fn frame(user_data voidptr) {
 	gfx.end_pass()
 	gfx.commit()
 }
-
