@@ -3,5 +3,5 @@ Module {
 	description: 'FInal Project for CS77'
 	version: '0.0.0'
 	license: 'MIT'
-	dependencies: []
+	dependencies: ['sokol']
 }
