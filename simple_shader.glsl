@@ -2,27 +2,34 @@
 @vs vs
 in vec4 position;
 in vec4 color0;
-in uint time;
+in vec2 texcoord;
 
 out vec4 color;
+out vec2 uv;
 
 // You can add more functions here
 
 void main() {
     gl_Position = position;
     color = color0;
+    uv = vec2(texcoord.x, 1-texcoord.y);
 }
 @end
 
 // The following defines a fragment shader main function
 @fs fs
+uniform texture2D tex;
+uniform sampler smp;
+
 in vec4 color;
+in vec2 uv;
 out vec4 frag_color;
 
 // You can add more functions here
 
 void main() {
-    frag_color = color;
+    //frag_color = color;
+    frag_color= texture(sampler2D(tex, smp), uv);
 }
 @end
 
