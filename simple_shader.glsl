@@ -3,6 +3,11 @@
 in vec4 position;
 in vec4 color0;
 in vec2 texcoord;
+in ivec2 id;
+
+uniform vs_params {
+    ivec2 offset;
+};
 
 out vec4 color;
 out vec2 uv;
@@ -10,7 +15,14 @@ out vec2 uv;
 // You can add more functions here
 
 void main() {
-    gl_Position = position;
+
+    if (id.x == 1) {
+        gl_Position = position + ivec4(offset, 0, 0);
+    } else {
+        gl_Position = position;
+    }
+
+
     color = color0;
     uv = vec2(texcoord.x, 1-texcoord.y);
 }
@@ -29,7 +41,9 @@ out vec4 frag_color;
 
 void main() {
     //frag_color = color;
-    frag_color= texture(sampler2D(tex, smp), uv);
+    // texture(sampler2D(tex, smp), uv);
+    frag_color = color;
+
 }
 @end
 
